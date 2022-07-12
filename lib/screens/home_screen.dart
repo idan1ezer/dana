@@ -112,7 +112,7 @@ class _BottomNavigationBarState extends State<_BottomNavigationBar> {
         top: false,
         bottom: true,
         child: Padding(
-          padding: const EdgeInsets.only(top: 16, right: 8, left: 8),
+          padding: const EdgeInsets.only(top: 16, right: 8, left: 8, bottom: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -129,6 +129,12 @@ class _BottomNavigationBarState extends State<_BottomNavigationBar> {
                 icon: CupertinoIcons.bell_solid,
                 isSelected: (selectedIndex == 1),
                 onTap: handleItemSelected,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: GlowingActionButton(color: AppColors.secondary, icon: CupertinoIcons.add, onPressed: (){
+                  print("TODO");
+                }),
               ),
               _NavigationBarItem(
                 index: 2,
@@ -168,7 +174,7 @@ class _NavigationBarItem extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: () {onTap(index);},
       child: SizedBox(
-        height: 60,
+        width: 70,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

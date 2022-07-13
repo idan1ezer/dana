@@ -1,13 +1,13 @@
-import 'package:dana/pages/calls_page.dart';
-import 'package:dana/pages/messages_page.dart';
-import 'package:dana/pages/notification_page.dart';
+import 'package:dana/app.dart';
+import 'package:dana/pages/pages.dart';
+import 'package:dana/screens/screens.dart';
 import 'package:dana/theme.dart';
 import 'package:dana/helpers.dart';
 import 'package:dana/widgets/icon_buttons.dart';
 import 'package:dana/widgets/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -56,15 +56,23 @@ class HomeScreen extends StatelessWidget {
           child: IconBackground(
             icon: Icons.search,
             onTap: () {
-              print("TODO");
+              print("TODO search");
             },
           ),
         ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 24.0),
-            child: Avatar.small(url: Helpers.randomPictureUrl())
-          )
+            child: Hero(
+              tag: 'hero-profile-picture',
+              child: Avatar.small(
+                url: context.currentUserImage,
+                onTap: () {
+                  Navigator.of(context).push(ProfileScreen.route);
+                },
+              ),
+            ),
+          ),
         ],
       ),
       body: ValueListenableBuilder(
@@ -78,11 +86,11 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-
 }
 
 class _BottomNavigationBar extends StatefulWidget {
-  const _BottomNavigationBar({Key? key, required this.onItemSelected}) : super(key: key);
+  const _BottomNavigationBar({Key? key, required this.onItemSelected})
+      : super(key: key);
 
   final ValueChanged<int> onItemSelected;
 
@@ -132,9 +140,20 @@ class _BottomNavigationBarState extends State<_BottomNavigationBar> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: GlowingActionButton(color: AppColors.secondary, icon: CupertinoIcons.add, onPressed: (){
-                  print("TODO");
-                }),
+                child: GlowingActionButton(
+                    color: AppColors.secondary,
+                    icon: CupertinoIcons.add,
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) => const Dialog(
+                          child: AspectRatio(
+                            aspectRatio: 8 / 7,
+                            child: ContactsPage(),
+                          ),
+                        ),
+                      );
+                    }),
               ),
               _NavigationBarItem(
                 index: 2,
@@ -150,7 +169,6 @@ class _BottomNavigationBarState extends State<_BottomNavigationBar> {
                 isSelected: (selectedIndex == 3),
                 onTap: handleItemSelected,
               ),
-
             ],
           ),
         ),
@@ -160,7 +178,14 @@ class _BottomNavigationBarState extends State<_BottomNavigationBar> {
 }
 
 class _NavigationBarItem extends StatelessWidget {
-  const _NavigationBarItem({Key? key, required this.index, required this.lable, required this.icon, this.isSelected = false, required this.onTap,}) : super(key: key);
+  const _NavigationBarItem({
+    Key? key,
+    required this.index,
+    required this.lable,
+    required this.icon,
+    this.isSelected = false,
+    required this.onTap,
+  }) : super(key: key);
 
   final int index;
   final String lable;
@@ -172,19 +197,34 @@ class _NavigationBarItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () {onTap(index);},
+      onTap: () {
+        onTap(index);
+      },
       child: SizedBox(
         width: 70,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 20, color: isSelected ? AppColors.secondary : null,),
-            const SizedBox(height: 8,),
-            Text(lable, style: isSelected ? const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.secondary) : const TextStyle(fontSize: 11),),
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected ? AppColors.secondary : null,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+            Text(
+              lable,
+              style: isSelected
+                  ? const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.secondary)
+                  : const TextStyle(fontSize: 11),
+            ),
           ],
         ),
       ),
     );
   }
-
 }
